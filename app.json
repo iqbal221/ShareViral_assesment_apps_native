@@ -7,10 +7,12 @@
     "icon": "./assets/images/icon.png",
     "scheme": "assesmentapp",
     "userInterfaceStyle": "automatic",
+    
     "ios": {
       "icon": "./assets/expo.icon"
     },
     "android": {
+       "package": "com.zahed.assesmentapp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
