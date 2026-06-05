@@ -12,4 +12,9 @@ export class CourseListViewModel {
   static async query(params: any) {
     return await CourseRepository.queryCourses(params);
   }
+
+  // ✅ THIS IS WHAT YOU NEED
+  static updateEnrollment(id: string, isEnrolled: boolean) {
+    return CourseRepository.updateEnrollment(id, isEnrolled);
+  }
 }

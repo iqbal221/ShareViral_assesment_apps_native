@@ -135,13 +135,6 @@ export class CourseRepository {
     return courses;
   }
 
-  // 7. CLEAR CACHE
-  // static clearCourses() {
-  //   db.transaction((tx) => {
-  //     tx.executeSql("DELETE FROM courses");
-  //   });
-  // }
-
   // SAFE PARSER
   private static safeParseTags(tags: any): string[] {
     try {
@@ -151,5 +144,21 @@ export class CourseRepository {
     } catch {
       return [];
     }
+  }
+
+  static updateEnrollment(id: string, isEnrolled: boolean) {
+    return new Promise((resolve, reject) => {
+      try {
+        db.runSync?.("UPDATE courses SET isEnrolled = ? WHERE id = ?", [
+          isEnrolled ? 1 : 0,
+          id,
+        ]);
+
+        resolve(true);
+      } catch (error) {
+        console.log("Update enrollment error:", error);
+        reject(error);
+      }
+    });
   }
 }
