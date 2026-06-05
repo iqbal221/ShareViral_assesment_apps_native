@@ -1,23 +1,20 @@
-import SQLite from "react-native-sqlite-storage";
+// sqlite.ts
+import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabase(
-  { name: "courses.db" },
-  () => console.log("opened"),
-  (error: any) => console.log(error),
-);
+const db = SQLite.openDatabaseSync("courses.db");
+
+db.execSync(`
+  CREATE TABLE IF NOT EXISTS courses (
+    id TEXT PRIMARY KEY,
+    title TEXT,
+    instructor TEXT,
+    tags TEXT,
+    price REAL,
+    rating REAL,
+    duration REAL,
+    isPremium INTEGER,
+    isEnrolled INTEGER
+  );
+`);
 
 export default db;
-
-// Create table:
-db.transaction((tx) => {
-  tx.executeSql(`
-    CREATE TABLE IF NOT EXISTS courses(
-      id INTEGER PRIMARY KEY,
-      title TEXT,
-      instructor TEXT,
-      description TEXT,
-      category TEXT,
-      enrolled INTEGER
-    )
-  `);
-});

@@ -1,11 +1,5 @@
+import { Course } from "@/models/course";
 import { createSlice } from "@reduxjs/toolkit";
-
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  enrolled: boolean;
-}
 
 interface CourseState {
   courses: Course[];
@@ -13,6 +7,7 @@ interface CourseState {
   error: string | null;
   offline: boolean;
   lastSyncedAt: string | null;
+  last_updated: string;
 }
 
 const initialState: CourseState = {
@@ -21,6 +16,7 @@ const initialState: CourseState = {
   error: null,
   offline: false,
   lastSyncedAt: null,
+  last_updated: new Date().toISOString(),
 };
 
 // const courseSlice = createSlice({

@@ -1,5 +1,5 @@
 export interface Course {
-  id: number;
+  id: string;
   title: string;
   instructor: string;
   tags: string[];
@@ -10,4 +10,6 @@ export interface Course {
 
   isPremium: boolean;
   isEnrolled: boolean;
+
+  last_updated: string;
 }

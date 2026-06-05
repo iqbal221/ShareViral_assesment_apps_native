@@ -1,5 +1,5 @@
 // import { CourseRepository, getCourses } from "@/database/courseRepository";
-// import { Button, Text, View, View } from "react-native";
+// import { Button, Text, View } from "react-native";
 
 // const CourseDetailScreen = () => {
 
