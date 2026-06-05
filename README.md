@@ -1,56 +1,183 @@
-# Welcome to your Expo app 👋
+Here is a clean, **submission-ready `README.md`** that satisfies all your requirements exactly:
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+---
 
-## Get started
+# 📘 Course App (React Native + Supabase + SQLite)
 
-1. Install dependencies
+An **offline-first course management app** built with React Native (Expo), Supabase, and SQLite.
 
-   ```bash
-   npm install
-   ```
+It supports:
 
-2. Start the app
+* Offline cached course browsing
+* Background sync with Supabase
+* Search, filter, and sorting
+* Course detail view with enrollment persistence
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+# 🚀 Supabase Project Setup
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 1. Create Project
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Go to 👉 [https://supabase.com](https://supabase.com)
+Create a new project and wait for database initialization.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 2. Enable Database
 
-```bash
-npm run reset-project
+Use Supabase SQL Editor to create required tables (see schema below).
+
+---
+
+## 3. Environment Variables Setup
+
+Create a `.env` file in the root:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+⚠️ Important:
 
-### Other setup steps
+* Never hardcode secrets inside code
+* Never commit `.env` to GitHub
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+---
 
-## Learn more
+## 4. Supabase Client Setup
 
-To learn more about developing your project with Expo, look at the following resources:
+```ts
+import { createClient } from "@supabase/supabase-js";
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
-## Join the community
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# 🗄️ Database Schema
+
+## 📌 Courses Table
+
+```sql
+create table courses (
+  course_id text primary key,
+  title text not null,
+  description_short text,
+  instructor_id text,
+  instructor_name text not null,
+  instructor_expertise_level text,
+  duration_weeks int not null,
+  price_usd numeric not null,
+  is_premium boolean not null,
+  tags text[],
+  rating numeric not null,
+  last_updated text
+);
+```
+
+---
+
+## 📌 Optional: User Enrollment Table
+
+```sql
+create table user_enrollments (
+  id uuid default gen_random_uuid() primary key,
+  user_id text not null,
+  course_id text not null,
+  is_enrolled boolean default true
+);
+```
+
+---
+
+# 🔐 Row Level Security (RLS)
+
+## Enable RLS
+
+```sql
+alter table courses enable row level security;
+```
+
+---
+
+## Allow Public Read Access
+
+```sql
+create policy "Allow public read access"
+on courses
+for select
+using (true);
+```
+
+---
+
+## Optional: Authenticated Write Access
+
+```sql
+create policy "Allow insert for authenticated users"
+on courses
+for insert
+with check (auth.role() = 'authenticated');
+```
+
+---
+
+# ⚠️ Security Notes
+
+* ❌ Do NOT hardcode Supabase keys in source code
+* ❌ Do NOT expose service role key in frontend
+* ✅ Use `.env` file with `EXPO_PUBLIC_` prefix (Expo safe)
+* ✅ Use RLS policies to protect data access
+
+---
+
+# 🧠 Assumptions
+
+* Courses are global (shared for all users)
+* Enrollment is user-specific (stored locally or in separate table)
+* SQLite is used for offline caching
+* Supabase is the source of truth for remote data
+* Local fields like `is_enrolled` must NOT be overwritten during sync
+
+---
+
+# 🔄 Data Flow (Offline First)
+
+```
+App Start
+   ↓
+Load SQLite (instant UI)
+   ↓
+Fetch Supabase (background sync)
+   ↓
+Update local DB
+   ↓
+Refresh UI
+```
+
+---
+
+# 📦 Tech Stack
+
+* React Native (Expo Router)
+* Supabase (Backend)
+* SQLite (Local storage)
+* Redux Toolkit
+* TypeScript
+
+---
+
+# ✨ Features
+
+* Offline-first course list
+* Supabase sync engine
+* Course search, filter, sort
+* Course detail screen
+* Enrollment toggle (persisted locally)
+* Instant UI updates across screens
+
